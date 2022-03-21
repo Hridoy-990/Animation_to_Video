@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Animation_to_video</string>
+    <string name="add_image">Add Image</string>
+    <string name="create_video">Create video</string>
+    <string name="loading">Loading...</string>
+    <string name="play">play</string>
+    <string name="err_no_input_file">Select video file that you want to convert to grayscale first</string>
+    <string name="warn_no_storage_permission">Don\'t have permission to select images from external storage</string>
+    <string name="err_one_file">You need to select multiple files</string>
 </resources>
