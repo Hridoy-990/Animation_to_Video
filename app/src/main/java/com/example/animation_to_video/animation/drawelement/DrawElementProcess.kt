@@ -2,7 +2,6 @@ package com.example.animation_to_video.animation.drawelement
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.VectorDrawable
 import android.util.Log
 import com.example.animation_to_video.R
 import com.example.animation_to_video.animation.gl.LinePoint
@@ -51,19 +50,13 @@ class DrawElementProcess(wid: Int, hei: Int, context: Context) {
 
         Log.e(TAG, "createBitmap Default: width => $width height => $height presentTime -> $p tot => $t " )
         Log.e(TAG, "createBitmap 1: x1 => 0f y1 => 0f  x2 => ${(p / t) * width.toFloat()} y2 => $lineWidth " )
-
-        mDrawRectangle(0f, 0f, (p / t) * width.toFloat(), lineWidth, getPaint(0))
-
         Log.e(TAG, "createBitmap 2: x1 => 0f y1 => 0f  x2 => $lineWidth y2 => ${(p / t) * height.toFloat()} " )
-
-        mDrawRectangle(0f, 0f, lineWidth, (p / t) * height.toFloat(), getPaint(0))
-
         Log.e(TAG, "createBitmap 3: x1 => ${width.toFloat() - lineWidth} y1 => 0f  x2 => ${width.toFloat()} y2 => ${(p / t) * height.toFloat()} " )
-
-        mDrawRectangle(width.toFloat() - lineWidth, 0f, width.toFloat(), (p / t) * height.toFloat(), getPaint(0))
-
         Log.e(TAG, "createBitmap 4: x1 => 0f y1 => ${height.toFloat() - lineWidth} x2 => ${(p / t) * width.toFloat()} y2 => ${height.toFloat()} " )
 
+        mDrawRectangle(0f, 0f, (p / t) * width.toFloat(), lineWidth, getPaint(0))
+        mDrawRectangle(0f, 0f, lineWidth, (p / t) * height.toFloat(), getPaint(0))
+        mDrawRectangle(width.toFloat() - lineWidth, 0f, width.toFloat(), (p / t) * height.toFloat(), getPaint(0))
         mDrawRectangle(0f, height.toFloat() - lineWidth, (p / t) * width.toFloat(), height.toFloat(), getPaint(0))
 
         val circleX = (width/2).toFloat()
@@ -109,8 +102,8 @@ class DrawElementProcess(wid: Int, hei: Int, context: Context) {
 
         //Log.d(TAG, "createBitmap: ${textBitmap.width} x ${textBitmap.height}")
 
-        val textRext = Rect(0, 0, (p / t * width).toInt(), height)
-        canvas.drawBitmap(textBitmap, textRext, textRext, RectPaint)
+        val textRect = Rect(0, 0, (p / t * width).toInt(), height)
+        canvas.drawBitmap(textBitmap, textRect, textRect, RectPaint)
         //canvas.drawBitmap(textBitmap,0f,0f,RectPaint)
 
         return bitmap
@@ -161,7 +154,7 @@ class DrawElementProcess(wid: Int, hei: Int, context: Context) {
         canvas.drawRect(left, top, right, bottom, paint)
     }
 
-    fun mDrawCircle(cx: Float, cy: Float, rad: Float, paint: Paint){
+    private fun mDrawCircle(cx: Float, cy: Float, rad: Float, paint: Paint){
         canvas.drawCircle(cx, cy, rad, paint)
     }
 

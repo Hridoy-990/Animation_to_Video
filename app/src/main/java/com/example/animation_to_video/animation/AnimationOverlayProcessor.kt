@@ -208,20 +208,20 @@ class AnimationOverlayProcessor {
         if (err != EGL14.EGL_SUCCESS)
             throw RuntimeException(GLUtils.getEGLErrorString(err))
 
-        val ctxAttribs = intArrayOf(
+        val ctxAttributes = intArrayOf(
             EGL14.EGL_CONTEXT_CLIENT_VERSION, 2,
             EGL14.EGL_NONE
         )
-        eglContext = EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT, ctxAttribs, 0)
+        eglContext = EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT, ctxAttributes, 0)
 
         err = EGL14.eglGetError()
         if (err != EGL14.EGL_SUCCESS)
             throw RuntimeException(GLUtils.getEGLErrorString(err))
 
-        val surfaceAttribs = intArrayOf(
+        val surfaceAttributes = intArrayOf(
             EGL14.EGL_NONE
         )
-        eglSurface = EGL14.eglCreateWindowSurface(eglDisplay, configs[0], inputSurface, surfaceAttribs, 0)
+        eglSurface = EGL14.eglCreateWindowSurface(eglDisplay, configs[0], inputSurface, surfaceAttributes, 0)
         err = EGL14.eglGetError()
         if (err != EGL14.EGL_SUCCESS)
             throw RuntimeException(GLUtils.getEGLErrorString(err))

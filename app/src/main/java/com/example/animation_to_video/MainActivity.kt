@@ -25,18 +25,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        if (savedInstanceState != null) {
-//            selectedImgUri = savedInstanceState.getParcelable("selectedImgUri")!!
-//        }
+        if (savedInstanceState != null) {
+            selectedImgUri = savedInstanceState.getParcelable("selectedImgUri")!!
+        }
 
         initView()
 
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putParcelable("selectedImgUri", selectedImgUri)
-//    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("selectedImgUri", selectedImgUri)
+    }
 
     private fun initView() {
         binding.btnAddImage.setOnClickListener {
