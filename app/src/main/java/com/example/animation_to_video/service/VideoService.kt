@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import com.example.animation_to_video.animation.AnimationOverlayProcessor
+import com.example.animation_to_video.templatemode.TemplateActivity
 import com.example.animation_to_video.videoprocessing.Encoder
 import java.io.File
 
@@ -26,13 +27,15 @@ class VideoService : IntentService(TAG) {
         val outPath = intent.getStringExtra(KEY_OUT_PATH)
         val finalPath = intent.getStringExtra(FINAL_VIDEO_PATH)
         val contentUri = intent.getStringExtra(CONTENT_URI)
+        val selectedTemplate = intent.getIntExtra(TemplateActivity.SELECTED_TEMPLATE,0)
+        val backgroundOpacity = intent.getFloatExtra(BACKGROUND_OPACITY,1.0f)
 
         var videoPath = outPath
         val videoFile = File(videoPath)
         if (videoFile.exists()) videoFile.delete()
         Encoder().encode(videoPath!!, imageUri , contentResolver)
 
-        AnimationOverlayProcessor().process(applicationContext , finalPath!!, contentResolver.openFileDescriptor(Uri.parse(contentUri), "r")!!.fileDescriptor)
+        AnimationOverlayProcessor().process(applicationContext , finalPath!!, contentResolver.openFileDescriptor(Uri.parse(contentUri), "r")!!.fileDescriptor , selectedTemplate)
         // Notify MainActivity that we're done
         val pi = intent.getParcelableExtra<PendingIntent>(KEY_RESULT_INTENT)
         pi?.send()
@@ -49,6 +52,7 @@ class VideoService : IntentService(TAG) {
         const val CONTENT_URI = "com.example.animation_to_video.key.CONTENT_URI"
         const val FINAL_VIDEO_PATH = "com.example.animation_to_video.key.FINAL_VIDEO_URI"
         const val KEY_FPS = "framerate"
+        const val BACKGROUND_OPACITY = "background-opacity"
     }
 
 

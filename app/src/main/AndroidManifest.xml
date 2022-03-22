@@ -14,6 +14,9 @@
         android:theme="@style/Theme.Animation_to_video">
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".templatemode.TemplateActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +36,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_path" />
         </provider>
-
     </application>
 
 </manifest>

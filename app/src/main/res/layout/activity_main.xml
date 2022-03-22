@@ -34,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@id/btn_create_video"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="16sp"
-        android:visibility="invisible"/>
+        />
 
     <Button
         android:id="@+id/playButton"

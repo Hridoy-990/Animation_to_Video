@@ -9,22 +9,28 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.example.animation_to_video.databinding.ActivityMainBinding
 import com.example.animation_to_video.service.VideoService
+import com.example.animation_to_video.templatemode.TemplateActivity
+import kotlinx.coroutines.*
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var selectedImgUri : Uri? = null
+    var processingflag = true
+    var selectedTemplate: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        selectedTemplate = intent.getIntExtra(TemplateActivity.SELECTED_TEMPLATE,0)
+        binding.progressBar.text = selectedTemplate.toString() + " no template selected!"
         if (savedInstanceState != null) {
             selectedImgUri = savedInstanceState.getParcelable("selectedImgUri")!!
         }
@@ -49,6 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnCreateVideo.setOnClickListener {
             requestEncodeImages()
+            startCounting()
         }
 
         binding.playButton.setOnClickListener {
@@ -60,7 +67,10 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == CODE_IMAGE_SEARCH && resultCode == Activity.RESULT_OK)  selectedImgUri = data?.data
-        else if (requestCode == CODE_ENCODING_FINISHED)  binding.progressBar.visibility = View.INVISIBLE
+        else if (requestCode == CODE_ENCODING_FINISHED)  {
+            processingflag = false
+            Toast.makeText(this,"Done",Toast.LENGTH_SHORT).show()
+        }
 
     }
 
@@ -82,17 +92,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        configureUi()
-    }
-
-    private fun configureUi() {
-        if (isServiceRunning(this, VideoService::class.java)) binding.progressBar.visibility = View.VISIBLE
-        else binding.progressBar.visibility = View.INVISIBLE
-
-    }
 
     private fun requestEncodeImages() {
         if (selectedImgUri != null) {
@@ -105,6 +104,10 @@ class MainActivity : AppCompatActivity() {
                 putExtra(VideoService.FINAL_VIDEO_PATH,getFinalOutputPath())
                 putExtra(VideoService.CONTENT_URI,contentUri.toString())
                 putExtra(VideoService.KEY_IMAGES, selectedImgUri.toString())
+                putExtra(TemplateActivity.SELECTED_TEMPLATE,selectedTemplate%4)
+
+                // hard coded Opacity
+                putExtra(VideoService.BACKGROUND_OPACITY,0.5f)
 
                 // We want this Activity to get notified once the encoding has finished
                 val pi = createPendingResult(CODE_ENCODING_FINISHED, intent, 0)
@@ -113,12 +116,32 @@ class MainActivity : AppCompatActivity() {
 
             startService(intent)
 
-            binding.progressBar.visibility = View.VISIBLE
         } else {
             Toast.makeText(this@MainActivity, getString(R.string.err_one_file), Toast.LENGTH_LONG)
                 .show()
         }
     }
+
+    fun startCounting() {
+
+        // code for time counting --------------------------------------------
+        processingflag = true
+
+        var cnt = 0
+        val defaultScope = CoroutineScope(Dispatchers.Default)
+        defaultScope.launch {
+            while (processingflag){
+                cnt += 2
+                withContext(Dispatchers.Main){
+                    binding.progressBar.text = (cnt/10).toString()+"."+(cnt%10).toString()
+                }
+                delay(200)
+            }
+        }
+        // ------------------------------------------------------------------------
+
+    }
+
 
     private fun playPreview() {
         val outFile = File(getFinalOutputPath())
