@@ -25,7 +25,7 @@ class Encoder() {
     private var mime = "video/avc"
     private var trackIndex = -1
     private var presentationTimeUs = 0L
-    private val totoalTime = 5000000L
+    private val totalTime = 10000000L
     private var frameRate = 24+12
     private val timeoutUs = 10000L
     private val bufferInfo = MediaCodec.BufferInfo()
@@ -136,11 +136,11 @@ class Encoder() {
 
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, logoUri)
 
-        while (presentationTimeUs < totoalTime){
+        while (presentationTimeUs < totalTime){
             drainEncoder(false)
 
 
-            val effectMVP = effectsFactory.getMvp(7,presentationTimeUs,totoalTime,size!!)
+            val effectMVP = effectsFactory.getMvp(7,presentationTimeUs,totalTime,size!!)
 
             renderer.draw(size!!.width, size!!.height, bitmap,effectMVP)
             EGLExt.eglPresentationTimeANDROID(eglDisplay, eglSurface, presentationTimeUs * 1000)
