@@ -38,7 +38,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         userInputForTemplate = intent.getSerializableExtra(TemplateActivity.TEMPLATE_DATA) as UserInputForTemplate
+
         if (savedInstanceState != null) {
             selectedImgUri = savedInstanceState.getParcelable("selectedImgUri")!!
             userInputForTemplate.logoUri = selectedImgUri.toString()
@@ -67,8 +69,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         // default video
         val outPath = getOutputPath()
-        val contentUri =
-            FileProvider.getUriForFile(this, "com.example.intromaker.provider", File(outPath))
+        val contentUri = FileProvider.getUriForFile(this, "com.example.animation_to_video.provider", File(outPath))
 
         userInputForTemplate.logoUri = contentUri.toString()
 
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun initDataFromTemplateToView() {
+
         binding.bigEditText.setText(userInputForTemplate.bigText)
         binding.bigEditText.setTextColor(userInputForTemplate.bigTextColor)
         binding.smallEditText.setText(userInputForTemplate.smallText)
@@ -210,9 +212,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 putExtra(VideoService.CONTENT_URI,contentUri.toString())
                 putExtra(USER_INPUT_DATA,userInputForTemplate)
 
-                // hard coded Opacity
-                putExtra(VideoService.BACKGROUND_OPACITY,0.5f)
-
                 // We want this Activity to get notified once the encoding has finished
                 val pi = createPendingResult(CODE_ENCODING_FINISHED, intent, 0)
                 putExtra(VideoService.KEY_RESULT_INTENT, pi)
@@ -259,6 +258,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         if (outFile.exists()) {
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)  FileProvider.getUriForFile(this, "$packageName.provider", outFile)
                       else Uri.parse(outFile.absolutePath)
+
             binding.previewImageView.visibility = View.GONE
             binding.previewVideoView.visibility = View.VISIBLE
             binding.previewVideoView.setVideoURI(uri)
@@ -276,7 +276,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    fun colorPicker(id: Int) {
+    private fun colorPicker(id: Int) {
 
         val initialColor = 0
         when(id) {
@@ -321,7 +321,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         return cacheDir.absolutePath + "/" + OUT_FILE_NAME
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if(parent == binding.resolutionSpinner) {
             var selectedResolution = parent.getItemAtPosition(position).toString()
             if(selectedResolution.isEmpty()) selectedResolution = "720"

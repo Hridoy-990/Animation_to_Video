@@ -28,7 +28,7 @@ class TemplateData {
         // template 0000000000000000000000000000000000000000000000000
         data.add(UserInputForTemplate(
             0,"Lii Lab", Color.WHITE,"abc",
-            Color.TRANSPARENT, Color.WHITE,"video", Color.TRANSPARENT,
+            Color.TRANSPARENT, Color.BLUE,"video", Color.TRANSPARENT,
             "","",1.0f,false,"",
             720
         ))
@@ -44,7 +44,7 @@ class TemplateData {
         // tamplate 222222222222222222222222222222222222222222222222
         data.add(UserInputForTemplate(
             2,"Lii Lab", Color.RED,"Heart",
-            Color.CYAN, Color.BLACK,"video", Color.TRANSPARENT,
+            Color.CYAN, Color.GREEN,"video", Color.TRANSPARENT,
             "","",1.0f,false,"",
             720
         ))
@@ -53,7 +53,7 @@ class TemplateData {
         data.add(
             UserInputForTemplate(
             2+1,"Lii Lab", Color.RED,"Heart",
-            Color.CYAN, Color.WHITE,"video", Color.TRANSPARENT,
+            Color.CYAN, Color.GRAY,"video", Color.TRANSPARENT,
             "","",1.0f,false,"",
             720
         )
@@ -67,7 +67,7 @@ class TemplateData {
             720
         ))
 
-        // template 44444444444444444444444444444444444444444444444444444444444444444444444
+        // template 55555555555555555555555555555555555555555555555555555555555555555555555
         data.add(UserInputForTemplate(
             5,"Lii Lab", Color.WHITE,"Heart",
             Color.RED, Color.YELLOW,"video", Color.TRANSPARENT,
