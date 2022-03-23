@@ -4,8 +4,10 @@ import android.app.IntentService
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
+import com.example.animation_to_video.MainActivity
 import com.example.animation_to_video.animation.AnimationOverlayProcessor
 import com.example.animation_to_video.templatemode.TemplateActivity
+import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import com.example.animation_to_video.videoprocessing.Encoder
 import java.io.File
 
@@ -23,19 +25,20 @@ class VideoService : IntentService(TAG) {
 
     private fun encodeImages(intent: Intent) {
 
-        val imageUri = Uri.parse(intent.getStringExtra(KEY_IMAGES))
+        val userInputForTemplate: UserInputForTemplate = intent.getSerializableExtra(MainActivity.USER_INPUT_DATA) as UserInputForTemplate
+        val userUri = Uri.parse(userInputForTemplate.logoUri)
         val outPath = intent.getStringExtra(KEY_OUT_PATH)
         val finalPath = intent.getStringExtra(FINAL_VIDEO_PATH)
         val contentUri = intent.getStringExtra(CONTENT_URI)
-        val selectedTemplate = intent.getIntExtra(TemplateActivity.SELECTED_TEMPLATE,0)
-        val backgroundOpacity = intent.getFloatExtra(BACKGROUND_OPACITY,1.0f)
+        val selectedTemplate = userInputForTemplate.selectedTemplate
+        val backgroundOpacity = userInputForTemplate.backgroundBrightness
 
         var videoPath = outPath
-        val videoFile = File(videoPath)
+       /* val videoFile = File(videoPath)
         if (videoFile.exists()) videoFile.delete()
-        Encoder().encode(videoPath!!, imageUri , contentResolver)
+        Encoder().encode(videoPath!!, imageUri , contentResolver)*/
 
-        AnimationOverlayProcessor().process(applicationContext , finalPath!!, contentResolver.openFileDescriptor(Uri.parse(contentUri), "r")!!.fileDescriptor , selectedTemplate)
+        AnimationOverlayProcessor().process(applicationContext , finalPath!!, contentResolver.openFileDescriptor(userUri, "r")!!.fileDescriptor , selectedTemplate , userInputForTemplate)
         // Notify MainActivity that we're done
         val pi = intent.getParcelableExtra<PendingIntent>(KEY_RESULT_INTENT)
         pi?.send()

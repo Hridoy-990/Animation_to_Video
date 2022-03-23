@@ -10,14 +10,13 @@ import android.util.Log
 import android.util.Size
 import android.view.Surface
 import com.example.animation_to_video.MainActivity
-import com.example.animation_to_video.animation.drawelement.DrawElementProcess
-import com.example.animation_to_video.animation.drawelement.TemplateOne
-import com.example.animation_to_video.animation.drawelement.TemplateThree
-import com.example.animation_to_video.animation.drawelement.TemplateTwo
+import com.example.animation_to_video.animation.drawelement.*
 import com.example.animation_to_video.animation.gl.BitmapAnimator
 import com.example.animation_to_video.animation.gl.BitmapEffectFactory
 import com.example.animation_to_video.animation.gl.BitmapTextureRenderer
 import com.example.animation_to_video.getBestSupportedResolution
+import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
+import com.example.animation_to_video.videoprocessing.Encoder
 import java.io.FileDescriptor
 import java.lang.RuntimeException
 import java.security.InvalidParameterException
@@ -87,10 +86,10 @@ class AnimationOverlayProcessor {
     // our OpenGL rendering thread, so we need some synchronization
     private val lock = Object()
 
-    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor ,selectedTemplate: Int) {
+    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor ,selectedTemplate: Int , userInputForTemplate: UserInputForTemplate) {
         try {
             init(context,outPath, inputVidFd)
-            process(context,selectedTemplate)
+            process(context,selectedTemplate , userInputForTemplate)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -232,12 +231,17 @@ class AnimationOverlayProcessor {
         if (!EGL14.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext))
             throw RuntimeException("eglMakeCurrent(): " + GLUtils.getEGLErrorString(EGL14.eglGetError()))
     }
+    var totalFrames = 0
+    private fun process(context: Context,selectedTemplate: Int,userInputForTemplate: UserInputForTemplate) {
 
-    private fun process(context: Context,selectedTemplate: Int) {
+        // template choose
 
-        val templateOne = TemplateOne(width,height,context,"hello there") // template choose
-        val templateTwo = TemplateTwo(width,height,context,"hello there") // template choose
-        val templateThree = TemplateThree(width,height,context,"hello there") // template choose
+        val templateOne = TemplateOne(width,height,context,userInputForTemplate)
+        val templateTwo = TemplateTwo(width,height,context,userInputForTemplate)
+        val templateThree = TemplateThree(width,height,context,userInputForTemplate)
+        val templateFour = TemplateFour(width,height,context,userInputForTemplate)
+        val templateFive = TemplateFive(width,height,context,userInputForTemplate)
+        val templateSix = TemplateSix(width,height,context,userInputForTemplate)
 
         allInputExtracted = false
         allInputDecoded = false
@@ -258,6 +262,7 @@ class AnimationOverlayProcessor {
                 // Drain Encoder & mux to output file first
                 val outBufferId = encoder!!.dequeueOutputBuffer(bufferInfo, mediaCodedTimeoutUs)
                 if (outBufferId >= 0) {
+
 
                     val encodedBuffer = encoder!!.getOutputBuffer(outBufferId)
 
@@ -303,15 +308,17 @@ class AnimationOverlayProcessor {
                             videoRenderer?.draw(getMVP(), texMatrix!!, null)
 
                             bitmapAnimator.update()
-
+                            Log.e(Encoder.TAG, "drainEncoder: ${bufferInfo.presentationTimeUs} -- $totalTime -- no : ${totalFrames++}")
 
                             //val bitmapToDraw = createBitmap(width, height)
                             //val bitmapToDraw = drawElementProcessor?.createBitmap(bufferInfo.presentationTimeUs,totalTime)
-                            val bitmapToDraw = when (selectedTemplate) {
+                            val bitmapToDraw = when (userInputForTemplate.selectedTemplate) {
                                 0 -> templateOne.gitBitmap(bufferInfo.presentationTimeUs)
-                                1 -> templateTwo.gitBitmap(bufferInfo.presentationTimeUs)
+                                1 -> templateTwo.getBitmap(bufferInfo.presentationTimeUs)
                                 2 -> templateThree.getBitmap(bufferInfo.presentationTimeUs)
-                                else -> drawElementProcessor?.createBitmap(bufferInfo.presentationTimeUs,totalTime)
+                                3 -> templateFour.getBitmap(bufferInfo.presentationTimeUs)
+                                4 -> templateFive.getBitmap(bufferInfo.presentationTimeUs)
+                                else -> templateSix.getBitmap(bufferInfo.presentationTimeUs)
                             }
 
                             val newMVP = bitmapEffectFactory?.getMVP(

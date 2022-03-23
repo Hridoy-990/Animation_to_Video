@@ -14,6 +14,7 @@ class TemplateActivity : AppCompatActivity() , TemplateAdapter.OnItemClickListen
     private lateinit var binding : ActivityTemplateBinding
 
     private lateinit var templateAdapter: TemplateAdapter
+    private val templateData = TemplateData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +35,12 @@ class TemplateActivity : AppCompatActivity() , TemplateAdapter.OnItemClickListen
     private fun getTemplateList() : List<TemplateItem> {
 
         val templateArrayList = ArrayList<TemplateItem>()
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"Minimal"))
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"Nature"))
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"Education"))
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"name4"))
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"name5"))
-        templateArrayList.add(TemplateItem(R.drawable.ic_video,"name6"))
+        templateArrayList.add(TemplateItem(R.drawable.tmpbg0,"Template 0"))
+        templateArrayList.add(TemplateItem(R.drawable.tmpbg1,"Template 1"))
+        templateArrayList.add(TemplateItem(R.drawable.tmpbg2,"Template 2"))
+        templateArrayList.add(TemplateItem(R.drawable.tmpbg3,"Template 3"))
+        templateArrayList.add(TemplateItem(R.drawable.tmpbg4,"Template 4"))
+        templateArrayList.add(TemplateItem(R.drawable.ic_video,"Template 5"))
 
         return templateArrayList
     }
@@ -47,13 +48,14 @@ class TemplateActivity : AppCompatActivity() , TemplateAdapter.OnItemClickListen
     override fun onItemClick(position: Int) {
         Toast.makeText(this,"$position clicked", Toast.LENGTH_SHORT).show()
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(SELECTED_TEMPLATE,position)
+        intent.putExtra(TEMPLATE_DATA, templateData.data[position])
         startActivity(intent)
     }
 
 
     companion object {
-        val SELECTED_TEMPLATE = "selected-template"
+        const val SELECTED_TEMPLATE = "selected-template"
+        const val TEMPLATE_DATA = "template-data"
     }
 
 

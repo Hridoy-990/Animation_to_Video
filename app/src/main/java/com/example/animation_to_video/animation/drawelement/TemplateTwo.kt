@@ -2,6 +2,7 @@ package com.example.animation_to_video.animation.drawelement
 
 import android.content.Context
 import android.graphics.*
+import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import kotlin.math.min
 
 /**
@@ -9,10 +10,8 @@ import kotlin.math.min
  * Created on 22,March,2022
  */
 class TemplateTwo(
-    private val width: Int,
-    private val height: Int,
-    private val context: Context,
-    private val text: String
+    private val width: Int, private val height: Int,
+    private val context: Context, userInputForTemplate: UserInputForTemplate
 ) {
     private var textBitmapBig: Bitmap
     private var textBitmapSmall: Bitmap
@@ -21,18 +20,21 @@ class TemplateTwo(
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
-
-        textBitmapBig = bitmapFromText.getBitmap(1000,((1f/5f)*height).toInt(), text, false,"#85c96d")
-        textBitmapSmall = bitmapFromText.getBitmap(1000,((1f/10f)*height).toInt(),text,false,"#000000")
+        textBitmapBig = bitmapFromText.getBitmap(
+            1000,((1f/5f)*height).toInt(), userInputForTemplate.bigText,
+            false,userInputForTemplate.bigTextColor,Color.TRANSPARENT,true)
+        textBitmapSmall = bitmapFromText.getBitmap(1000,((1f/10f)*height).toInt(),
+            userInputForTemplate.smallText,false,
+            userInputForTemplate.smallTextColor,Color.TRANSPARENT,true)
 
         linePaint.color = Color.RED
         linePaint.style = Paint.Style.STROKE
         linePaint.isAntiAlias = true
-        linePaint.strokeWidth = (1f / 20f) * height
+        linePaint.strokeWidth = (1f/20f)*height
         linePaint.strokeJoin = Paint.Join.ROUND
     }
 
-    fun gitBitmap(pTime: Long): Bitmap? {
+    fun getBitmap(pTime: Long): Bitmap?{
         val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
@@ -83,7 +85,9 @@ class TemplateTwo(
             )
             canvas.drawBitmap(textBitmapSmall, subRect, desRect, paint)
         }
-        return bitmap
 
+
+
+        return bitmap
     }
 }

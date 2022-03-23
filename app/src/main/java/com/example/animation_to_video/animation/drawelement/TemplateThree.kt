@@ -3,6 +3,7 @@ package com.example.animation_to_video.animation.drawelement
 import android.content.Context
 import android.graphics.*
 import android.util.Log
+import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import kotlin.math.min
 
 /**
@@ -10,10 +11,8 @@ import kotlin.math.min
  * Created on 22,March,2022
  */
 class TemplateThree(
-    private val width: Int,
-    private val height: Int,
-    private val context: Context,
-    private val text: String
+    private val width: Int, private val height: Int,
+    private val context: Context, userInputForTemplate: UserInputForTemplate
 ) {
     private var textBitmapBig: Bitmap
     private var textBitmapSmall: Bitmap
@@ -23,9 +22,12 @@ class TemplateThree(
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     init {
 
-        textBitmapBig = bitmapFromText.getBitmap(1000,((1f/5f)*height).toInt(), text, false,"#85c96d")
-        textBitmapSmall = bitmapFromText.getBitmap(1000,((1f/10f)*height).toInt(),text,false,"#000000")
-        textBitmapExtraSmall = bitmapFromText.getBitmap(1000 ,((1f/15f)*height).toInt(),text,false,"#85c96d")
+        textBitmapBig = bitmapFromText.getBitmap(1000,((1f/5f)*height).toInt(), userInputForTemplate.bigText, false,userInputForTemplate.bigTextColor,Color.TRANSPARENT,true)
+        textBitmapSmall = bitmapFromText.getBitmap(1000,((1f/10f)*height).toInt(),
+            userInputForTemplate.smallText,false,
+            userInputForTemplate.smallTextColor,Color.TRANSPARENT,true)
+        textBitmapExtraSmall = bitmapFromText.getBitmap(1000 ,((1f/15f)*height).toInt(), userInputForTemplate.smallText,false,
+            userInputForTemplate.smallTextColor,Color.TRANSPARENT,true)
         linePaint.color = Color.RED
         linePaint.style = Paint.Style.STROKE
         linePaint.isAntiAlias = true

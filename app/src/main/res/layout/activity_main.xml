@@ -4,45 +4,135 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-   <Button
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:id="@+id/btn_addImage"
-       android:text="@string/add_image"
-       app:layout_constraintTop_toTopOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       android:layout_marginTop="10dp"
-       />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/previewImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <VideoView
+            android:id="@+id/previewVideoView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
+        android:id="@+id/addImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_create_video"
-        android:text="@string/create_video"
-        app:layout_constraintTop_toBottomOf="@id/btn_addImage"
+        android:text="add BG"
+        app:layout_constraintEnd_toStartOf="@+id/createButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="8dp"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="create"
+        app:layout_constraintEnd_toEndOf="@+id/playButton"
+        app:layout_constraintEnd_toStartOf="@+id/playButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/addImageButton"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
-        android:id="@+id/progressBar"
+        android:id="@+id/progressText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/loading"
-        app:layout_constraintTop_toBottomOf="@id/btn_create_video"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:text="0.0"
         android:textSize="16sp"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/smallTextColor" />
 
     <Button
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/play"/>
+        android:text="play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/createButton"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <EditText
+        android:id="@+id/bigEditText"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="big edit text"
+        android:maxLength="15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addImageButton" />
+
+    <Button
+        android:id="@+id/bigTextColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bigEditText"
+        app:layout_constraintTop_toBottomOf="@+id/playButton" />
+
+    <EditText
+        android:id="@+id/smallEditText"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="small edit text"
+        android:maxLength="20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bigEditText" />
+
+    <Button
+        android:id="@+id/smallTextColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/smallEditText"
+        app:layout_constraintTop_toBottomOf="@+id/bigTextColor" />
+
+    <Button
+        android:id="@+id/barColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="bar color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/smallEditText" />
+
+    <Spinner
+        android:id="@+id/resolutionSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barColor" />
+
+    <Spinner
+        android:id="@+id/backgroundTypeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/resolutionSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/barColor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

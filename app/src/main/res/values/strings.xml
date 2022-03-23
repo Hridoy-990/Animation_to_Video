@@ -7,4 +7,20 @@
     <string name="err_no_input_file">Select video file that you want to convert to grayscale first</string>
     <string name="warn_no_storage_permission">Don\'t have permission to select images from external storage</string>
     <string name="err_one_file">You need to select multiple files</string>
+
+    <string-array name="resolution_values">
+        <item>144</item>
+        <item>240</item>
+        <item>360</item>
+        <item>480</item>
+        <item>720</item>
+        <item>1080</item>
+    </string-array>
+
+    <string-array name="background_types">
+        <item>video</item>
+        <item>image</item>
+        <item>color</item>
+    </string-array>
+
 </resources>
