@@ -9,13 +9,11 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.FileProvider
 import com.example.animation_to_video.databinding.ActivityMainBinding
 import com.example.animation_to_video.service.VideoService
@@ -24,11 +22,14 @@ import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import kotlinx.coroutines.*
 import yuku.ambilwarna.AmbilWarnaDialog
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
-    private var selectedImgUri : Uri? = null
+    private var selectedUri : Uri? = null
     lateinit var userInputForTemplate: UserInputForTemplate
     var processingflag = true
 
@@ -39,11 +40,12 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getPermission()
         userInputForTemplate = intent.getSerializableExtra(TemplateActivity.TEMPLATE_DATA) as UserInputForTemplate
 
         if (savedInstanceState != null) {
-            selectedImgUri = savedInstanceState.getParcelable("selectedImgUri")!!
-            userInputForTemplate.logoUri = selectedImgUri.toString()
+            selectedUri = savedInstanceState.getParcelable("selectedUri")!!
+            userInputForTemplate.logoUri = selectedUri.toString()
         }
 
         when (userInputForTemplate.selectedTemplate) {
@@ -62,16 +64,62 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     }
 
+    private fun getPermission() {
+        if(needsPermission(this@MainActivity)) {
+            requestPermission(this@MainActivity,0)
+        }
+    }
+
     private fun initUserInputAsTemplate() {
 
         //logoUri = Uri.parse("android.resource://" + packageName + "/" + R.raw.video)
-        userInputForTemplate.logoUri = selectedImgUri.toString()
+        userInputForTemplate.logoUri = selectedUri.toString()
 
         // default video
         val outPath = getOutputPath()
-        val contentUri = FileProvider.getUriForFile(this, "com.example.animation_to_video.provider", File(outPath))
+      //  val contentUri = FileProvider.getUriForFile(this, "com.example.animation_to_video.provider", File(outPath))
 
-        userInputForTemplate.logoUri = contentUri.toString()
+        val contentUri = when(userInputForTemplate.selectedTemplate) {
+            0 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg0.mp4")
+            )
+            1 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg1.mp4")
+            )
+            2 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg2.mp4")
+            )
+            3 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg3.mp4")
+            )
+            4 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg4.mp4")
+            )
+            5 -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(cacheDir.absolutePath + "/tmpbg4.mp4")
+            )
+            else -> FileProvider.getUriForFile(
+                this,
+                "com.example.animation_to_video.provider",
+                File(getOutputPath())
+            )
+        }
+
+        userInputForTemplate.backgroundVideoUri = contentUri.toString()
+        userInputForTemplate.backgroundImageUri = "android.resource://com.example.animation_to_video/drawable/sound"
+
 
         initDataFromTemplateToView()
     }
@@ -90,27 +138,44 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable("selectedImgUri", selectedImgUri)
-    }
+    private fun setListeners() {
 
-    private fun initView() {
-        binding.addImageButton.setOnClickListener {
+        binding.changeBackgroundButton.setOnClickListener{
             if (needsStoragePermission(this@MainActivity)) {
-                requestStoragePermission(this@MainActivity, CODE_IMAGE_SEARCH)
-            } else {
-                //performImagesSearch(this@MainActivity, CODE_IMAGE_SEARCH)
-                val gallery = Intent(
-                    Intent.ACTION_PICK,
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                )
-                startActivityForResult(gallery, 101)
+                requestStoragePermission(this@MainActivity, CODE_MEDIA_SEARCH)
+            }
+            else {
+                // val gallery = Intent(Intent.ACTION_PICK, MediaStore.Image.Media.EXTERNAL_CONTENT_URI)
+
+                when(userInputForTemplate.backgroundType) {
+                    "image" -> {
+                        val gallery = Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        )
+                        startActivityForResult(gallery, IMAGE_SEARCH)
+                        // update called in activity result ok
+                    }
+                    "video" -> {
+                        Log.d(TAG, "setListeners: video")
+                        val gallery = Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        )
+                        startActivityForResult(gallery, VIDEO_SEARCH)
+                        // update called in activity result ok
+                    }
+                    "color" -> {
+                        colorPicker(3) // 3 = background color
+                        Log.e(TAG, "setListeners: ${userInputForTemplate.backgroundColor}")
+                        //updatePreview(2) called in color picker
+                    }
+                }
             }
         }
 
         binding.createButton.setOnClickListener {
-            requestEncodeImages()
+            createVideo()
             startCounting()
             binding.createButton.isEnabled = false
         }
@@ -118,11 +183,25 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.playButton.setOnClickListener {
             playPreview()
         }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("selectedUri", selectedUri)
+    }
+
+    private fun initView() {
+
+        setListeners()
         binding.bigTextColor.setOnClickListener { colorPicker(0) }
         binding.smallTextColor.setOnClickListener { colorPicker(1) }
         binding.barColor.setOnClickListener { colorPicker(2) }
 
+        setSpinners()
+
+    }
+
+    private fun setSpinners() {
         // spinner for resolution --------------------------------------------------
         val resolutionSpinnerAdapter = ArrayAdapter.createFromResource(
             this,
@@ -158,45 +237,104 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.backgroundTypeSpinner.onItemSelectedListener = this
 
         // ------------------------------------------------------------------------
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
-            selectedImgUri = data?.data
-            userInputForTemplate.logoUri = selectedImgUri.toString()
+        if (requestCode == IMAGE_SEARCH && resultCode == Activity.RESULT_OK) {
+            userInputForTemplate.backgroundImageUri = (data?.data).toString()
+            selectedUri = data?.data
+            userInputForTemplate.logoUri = selectedUri.toString()
+
+            // ----------- init view --------------------------------
+            updatePreview(0)
+            // ------------------------------------------------------
+        }
+        else if(resultCode == RESULT_OK && requestCode == VIDEO_SEARCH) {
+            userInputForTemplate.backgroundVideoUri = (data?.data).toString()
+
+            // ----------- init view --------------------------------
+            updatePreview(1)
+            // ------------------------------------------------------
         }
         else if (requestCode == CODE_ENCODING_FINISHED)  {
             processingflag = false
             Toast.makeText(this,"Done",Toast.LENGTH_SHORT).show()
             binding.createButton.isEnabled = true
+            binding.previewVideoView.visibility = View.VISIBLE
+            saveVideoToInternalStorage() // save for external use
         }
 
     }
+    private fun saveVideoToInternalStorage() {
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val fileName = "Lii_${System.currentTimeMillis()/1000L}.mp4"
+        val appVideoDirectory = File(Environment.getExternalStorageDirectory(),"lii")
+        if(!appVideoDirectory.exists()) appVideoDirectory.mkdir()
 
-        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0])
-            Toast.makeText(this, getString(R.string.warn_no_storage_permission), Toast.LENGTH_LONG)
-                .show()
-        } else {
-            when (requestCode) {
-                CODE_IMAGE_SEARCH -> {
-                    performImagesSearch(
-                        this@MainActivity, CODE_IMAGE_SEARCH)
-                }
+        val fileToSave = File(appVideoDirectory,fileName)
+        if(!fileToSave.exists()) fileToSave
+        try {
+            val outputStream = FileOutputStream(fileToSave)
+            val inputStream = FileInputStream(File(getFinalOutputPath()))
+            val buffer = ByteArray(1024)
+            var len: Int
+            while (inputStream.read(buffer).also { len = it } > 0) {
+                outputStream.write(buffer, 0, len)
+            }
+            inputStream.close()
+            outputStream.close()
+            Toast.makeText(this, "Video file saved successfully.", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 
+
+    private fun updatePreview(id: Int) {
+        // id -> 0 = image, 1 = video, 2 = color
+        when(id){
+            0 -> {
+                binding.previewImageView.visibility = View.VISIBLE
+                binding.previewVideoView.visibility = View.GONE
+                binding.previewImageView.setImageURI(Uri.parse(userInputForTemplate.backgroundImageUri))
+            }
+            1 -> {
+                binding.previewImageView.visibility = View.GONE
+                binding.previewVideoView.visibility = View.VISIBLE
+                binding.previewVideoView.setVideoURI(Uri.parse(userInputForTemplate.backgroundVideoUri))
+            }
+            2 -> {
+                binding.previewImageView.visibility = View.VISIBLE
+                binding.previewVideoView.visibility = View.GONE
+                binding.previewImageView.setImageResource(0)
+                binding.previewImageView.setBackgroundColor(userInputForTemplate.backgroundColor)
+                Log.e(TAG, "updatePreview: ${userInputForTemplate.backgroundColor}")
             }
         }
     }
+//
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//
+//        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//            Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0])
+//            Toast.makeText(this, getString(R.string.warn_no_storage_permission), Toast.LENGTH_LONG)
+//                .show()
+//        } else {
+//            when (requestCode) {
+//                CODE_IMAGE_SEARCH -> {
+//                    performImagesSearch(
+//                        this@MainActivity, CODE_IMAGE_SEARCH)
+//                }
+//
+//            }
+//        }
+//    }
 
 
-    private fun requestEncodeImages() {
-        if (selectedImgUri != null) {
+    private fun createVideo() {
             val outPath = getOutputPath()
             val contentUri = FileProvider.getUriForFile(this, "com.example.animation_to_video.provider", File(outPath))
 
@@ -205,7 +343,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             Log.e(TAG, "createVideo: ${userInputForTemplate.bigText}")
 
             val intent = Intent(this, VideoService::class.java).apply {
-                action = VideoService.ACTION_ENCODE_IMAGES
+                action = VideoService.ACTION_ENCODE_VIDEO
 
                 putExtra(VideoService.KEY_OUT_PATH, getOutputPath())
                 putExtra(VideoService.FINAL_VIDEO_PATH,getFinalOutputPath())
@@ -219,10 +357,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
             startService(intent)
 
-        } else {
-            Toast.makeText(this@MainActivity, getString(R.string.err_one_file), Toast.LENGTH_LONG)
-                .show()
-        }
     }
 
     private fun generateUserInput() {
@@ -279,11 +413,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun colorPicker(id: Int) {
 
         val initialColor = 0
-        when(id) {
+   /*     when(id) {
             0 -> userInputForTemplate.bigTextColor
             1 -> userInputForTemplate.smallTextColor
             2 -> userInputForTemplate.barColor
-        }
+        }*/
 
         val dialog = AmbilWarnaDialog(this, initialColor, object :
             AmbilWarnaDialog.OnAmbilWarnaListener {
@@ -301,6 +435,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     2 -> {
                         userInputForTemplate.barColor = color
                         binding.barColor.setTextColor(color)
+                    }
+                    3 -> {
+                        userInputForTemplate.backgroundColor = color
+                        binding.changeBackgroundButton.setTextColor(color)
+                        updatePreview(2)
                     }
                 }
             }
@@ -339,12 +478,15 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     companion object {
         const val TAG = "MainActivity"
 
-        const val CODE_IMAGE_SEARCH = 1110
+        const val CODE_MEDIA_SEARCH = 1110
         const val CODE_ENCODING_FINISHED = 1111
         const val CODE_THUMB = 1112
         const val OUT_FILE_NAME = "out.mp4"
         const val USER_INPUT_DATA = "user-input-data"
         const val FINAL_VIDEO_NAME = "final.mp4"
+
+        const val IMAGE_SEARCH = 11
+        const val VIDEO_SEARCH = 21
     }
 
 

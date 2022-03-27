@@ -84,6 +84,18 @@ fun requestStoragePermission(activity: AppCompatActivity, code: Int) {
         activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), code)
 }
 
+fun getSizeByHeight(height: Int) : Size {
+    return when(height) {
+        144 -> Size(176, 144)
+        240 -> Size(320, 240)
+        360 -> Size(640, 360)
+        480 ->  Size(720, 480)
+        720 ->  Size(1280, 720)
+        1080 ->  Size(1920, 1080)
+        else ->  Size(1280,720)
+    }
+}
+
 fun performFileSearch(activity: AppCompatActivity, code: Int, multiple: Boolean, type: String,
                       vararg mimetype: String) {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {

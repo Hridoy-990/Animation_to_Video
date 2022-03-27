@@ -86,10 +86,10 @@ class AnimationOverlayProcessor {
     // our OpenGL rendering thread, so we need some synchronization
     private val lock = Object()
 
-    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor ,selectedTemplate: Int , userInputForTemplate: UserInputForTemplate) {
+    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor , userInputForTemplate: UserInputForTemplate) {
         try {
             init(context,outPath, inputVidFd)
-            process(context,selectedTemplate , userInputForTemplate)
+            process(context, userInputForTemplate)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -136,7 +136,7 @@ class AnimationOverlayProcessor {
 
                 // New frame available before the last frame was process...we dropped some frames
                 if (frameAvailable)
-                    Log.d(MainActivity.TAG, "Frame available before the last frame was process...we dropped some frames")
+                    Log.e(MainActivity.TAG, "Frame available before the last frame was process...we dropped some frames")
 
                 frameAvailable = true
                 lock.notifyAll()
@@ -232,7 +232,7 @@ class AnimationOverlayProcessor {
             throw RuntimeException("eglMakeCurrent(): " + GLUtils.getEGLErrorString(EGL14.eglGetError()))
     }
     var totalFrames = 0
-    private fun process(context: Context,selectedTemplate: Int,userInputForTemplate: UserInputForTemplate) {
+    private fun process(context: Context,userInputForTemplate: UserInputForTemplate) {
 
         // template choose
 
@@ -305,7 +305,7 @@ class AnimationOverlayProcessor {
                             GLES20.glClearColor(0f, 0f, 0f, 0f)
                             GLES20.glViewport(0, 0, width, height)
 
-                            videoRenderer?.draw(getMVP(), texMatrix!!, null)
+                            videoRenderer?.draw(getMVP(), texMatrix, null)
 
                             bitmapAnimator.update()
                             Log.e(Encoder.TAG, "drainEncoder: ${bufferInfo.presentationTimeUs} -- $totalTime -- no : ${totalFrames++}")

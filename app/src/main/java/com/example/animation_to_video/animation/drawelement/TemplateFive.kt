@@ -34,7 +34,7 @@ class TemplateFive(private val width: Int, private val height: Int,
 
         bitmapPaint.color = Color.RED
 
-        linePaint.color = Color.RED
+        linePaint.color = userInputForTemplate.barColor
         linePaint.style = Paint.Style.STROKE
         linePaint.isAntiAlias = true
         linePaint.strokeWidth = (1f / 20f) * height

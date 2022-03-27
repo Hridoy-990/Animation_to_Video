@@ -1,6 +1,10 @@
 package com.example.animation_to_video.videoprocessing
 
 import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
@@ -12,6 +16,8 @@ import android.util.Log
 import android.util.Size
 import android.view.Surface
 import com.example.animation_to_video.getBestSupportedResolution
+import com.example.animation_to_video.getSizeByHeight
+import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import java.lang.Exception
 import java.lang.RuntimeException
 
@@ -36,11 +42,13 @@ class Encoder() {
     private var surface: Surface? = null
 
 
-    fun encode(outVideoFilePath: String, logoUri: Uri, contentResolver: ContentResolver) {
+    fun encode(outVideoFilePath: String, backgroundImageUri: Uri, contentResolver: ContentResolver , backgroundOpacity: Float,
+               userInputForTemplate: UserInputForTemplate
+    ) {
         try {
-            initEncoder(outVideoFilePath, logoUri, contentResolver)
+            initEncoder(outVideoFilePath, backgroundImageUri, contentResolver,userInputForTemplate)
 
-            createVideo(logoUri, contentResolver)
+            createVideo(backgroundImageUri, contentResolver, backgroundOpacity,userInputForTemplate)
         } catch (e: Exception) {
             Log.e(TAG, "Encoding failed: " + e)
         } finally {
@@ -48,12 +56,14 @@ class Encoder() {
         }
     }
 
-    private fun initEncoder(outVideoFilePath: String, logoUri: Uri, contentResolver: ContentResolver) {
+    private fun initEncoder(outVideoFilePath: String, backgroundImageUri: Uri,
+                            contentResolver: ContentResolver,
+                            userInputForTemplate: UserInputForTemplate) {
         encoder = MediaCodec.createEncoderByType(mime)
-        size = getSupportedSize(logoUri, contentResolver)
+       // size = getSupportedSize(backgroundImageUri, contentResolver)
 
 
-        size = Size(1280,720)
+        size = getSizeByHeight(userInputForTemplate.videoResolution)
 
         val format = getFormat(size!!)
 
@@ -130,11 +140,22 @@ class Encoder() {
 
 
 
-    private fun createVideo(logoUri: Uri, contentResolver: ContentResolver) {
-        val renderer = TextureRenderer()
+    private fun createVideo(logoUri: Uri, contentResolver: ContentResolver,
+                            backgroundOpacity: Float,userInputForTemplate: UserInputForTemplate) {
+        val renderer = TextureRenderer(backgroundOpacity)
         val effectsFactory = EffectMvp()
 
-        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, logoUri)
+        val bitmap = Bitmap.createScaledBitmap(
+            MediaStore.Images.Media.getBitmap(contentResolver, logoUri),
+            size!!.width,size!!.height,false)
+
+        if(userInputForTemplate.backgroundType == "color"){
+            val rect = Rect(0,0,bitmap.width,bitmap.height)
+            val canvas = Canvas(bitmap)
+            val paint = Paint()
+            paint.color = userInputForTemplate.backgroundColor
+            canvas.drawRect(rect,paint)
+        }
 
         while (presentationTimeUs < totalTime){
             drainEncoder(false)

@@ -4,6 +4,7 @@ import android.app.IntentService
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import com.example.animation_to_video.MainActivity
 import com.example.animation_to_video.animation.AnimationOverlayProcessor
 import com.example.animation_to_video.templatemode.TemplateActivity
@@ -19,7 +20,7 @@ class VideoService : IntentService(TAG) {
 
     override fun onHandleIntent(p0: Intent?) {
         when(p0?.action) {
-            ACTION_ENCODE_IMAGES -> encodeImages(p0)
+            ACTION_ENCODE_VIDEO -> encodeImages(p0)
         }
     }
 
@@ -33,13 +34,34 @@ class VideoService : IntentService(TAG) {
         val selectedTemplate = userInputForTemplate.selectedTemplate
         val backgroundOpacity = userInputForTemplate.backgroundBrightness
 
+        Log.e(TAG, "encodeImages: ${userInputForTemplate.backgroundImageUri}")
+        Log.e(TAG, "encodeImages: ${Uri.parse(userInputForTemplate.backgroundImageUri)}")
+
         var videoPath = outPath
        /* val videoFile = File(videoPath)
         if (videoFile.exists()) videoFile.delete()
         Encoder().encode(videoPath!!, imageUri , contentResolver)*/
 
-        AnimationOverlayProcessor().process(applicationContext , finalPath!!, contentResolver.openFileDescriptor(userUri, "r")!!.fileDescriptor , selectedTemplate , userInputForTemplate)
-        // Notify MainActivity that we're done
+        if(userInputForTemplate.backgroundType == "video") {
+            AnimationOverlayProcessor().process(applicationContext,finalPath!!,
+                contentResolver.openFileDescriptor(Uri.parse(userInputForTemplate.backgroundVideoUri),"r")!!.fileDescriptor, userInputForTemplate)
+        }
+
+        else {
+            // get background video ready ----------------------------------------------------
+            val videoFile = File(outPath)
+            if (videoFile.exists()) videoFile.delete()
+            Encoder().encode(outPath!!, Uri.parse(userInputForTemplate.backgroundImageUri), contentResolver, backgroundOpacity,userInputForTemplate)
+            // ---------------------------------------------------------------------------------
+
+
+            // ----------- do effects -----------------------------------------------
+
+            AnimationOverlayProcessor().process(applicationContext,finalPath!!,
+                contentResolver.openFileDescriptor(Uri.parse(contentUri),"r")!!.fileDescriptor, userInputForTemplate)
+            // ----------------------------------------------------------------------------
+        }
+
         val pi = intent.getParcelableExtra<PendingIntent>(KEY_RESULT_INTENT)
         pi?.send()
 
@@ -48,7 +70,7 @@ class VideoService : IntentService(TAG) {
     companion object {
 
         val TAG = this::class.java.simpleName
-        const val ACTION_ENCODE_IMAGES = "com.example.animation_to_video.ENCODE_IMAGES"
+        const val ACTION_ENCODE_VIDEO = "com.example.animation_to_video.VIDEO"
         const val KEY_IMAGES = "com.example.animation_to_video.key.IMAGES"
         const val KEY_OUT_PATH = "com.example.animation_to_video.key.OUT_PATH"
         const val KEY_RESULT_INTENT = "com.example.animation_to_video.key.RESULT_INTENT"

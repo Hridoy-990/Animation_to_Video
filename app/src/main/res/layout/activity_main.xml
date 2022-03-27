@@ -33,10 +33,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/addImageButton"
+        android:id="@+id/changeBackgroundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="add BG"
+        android:text="Change video"
         app:layout_constraintEnd_toStartOf="@+id/createButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
         app:layout_constraintEnd_toEndOf="@+id/playButton"
         app:layout_constraintEnd_toStartOf="@+id/playButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/addImageButton"
+        app:layout_constraintStart_toEndOf="@+id/changeBackgroundButton"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
@@ -80,7 +80,7 @@
         android:hint="big edit text"
         android:maxLength="15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addImageButton" />
+        app:layout_constraintTop_toBottomOf="@+id/changeBackgroundButton" />
 
     <Button
         android:id="@+id/bigTextColor"

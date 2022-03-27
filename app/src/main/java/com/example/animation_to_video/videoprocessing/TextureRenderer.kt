@@ -12,7 +12,7 @@ import java.nio.IntBuffer
  * @author Md Jahirul Islam Hridoy
  * Created on 21,March,2022
  */
-class TextureRenderer {
+class TextureRenderer(backgroundOpacity: Float) {
     private val vertexShaderCode =
         "precision highp float;" +
 
@@ -27,16 +27,29 @@ class TextureRenderer {
                 "gl_Position = mvp * vec4(vertexPosition, 1.0);" +
                 "}"
 
+//    private val fragmentShaderCode =
+//        "precision mediump float;" +
+//
+//                "varying vec2 varUvs;" +
+//                "uniform sampler2D texSampler;" +
+//
+//                "void main()" +
+//                "{" +
+//                "gl_FragColor = texture2D(texSampler, varUvs);" +
+//                "}"
+
     private val fragmentShaderCode =
-        "precision mediump float;" +
 
-                "varying vec2 varUvs;" +
-                "uniform sampler2D texSampler;" +
-
-                "void main()" +
-                "{" +
-                "gl_FragColor = texture2D(texSampler, varUvs);" +
-                "}"
+        """
+                precision mediump float; 
+                varying vec2 varUvs; 
+                uniform sampler2D texSampler; 
+                
+                void main() 
+                {
+                    vec4 c = texture2D(texSampler, varUvs); 
+                    gl_FragColor = vec4($backgroundOpacity*c.r, $backgroundOpacity*c.g, $backgroundOpacity*c.b,c.a); }
+             """
 
 
     private var vertices = floatArrayOf(

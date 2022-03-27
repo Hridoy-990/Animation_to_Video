@@ -50,6 +50,9 @@ class TemplateActivity : AppCompatActivity() , TemplateAdapter.OnItemClickListen
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(TEMPLATE_DATA, templateData.data[position])
         startActivity(intent)
+
+        //overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
+        overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
     }
 
 
