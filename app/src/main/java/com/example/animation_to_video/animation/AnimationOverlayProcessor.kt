@@ -3,9 +3,11 @@ package com.example.animation_to_video.animation
 import android.content.Context
 import android.graphics.SurfaceTexture
 import android.media.*
+import android.net.Uri
 import android.opengl.*
 import android.os.Handler
 import android.os.HandlerThread
+import android.provider.MediaStore.Images.Media.getBitmap
 import android.util.Log
 import android.util.Size
 import android.view.Surface
@@ -14,6 +16,7 @@ import com.example.animation_to_video.animation.drawelement.*
 import com.example.animation_to_video.animation.gl.BitmapAnimator
 import com.example.animation_to_video.animation.gl.BitmapEffectFactory
 import com.example.animation_to_video.animation.gl.BitmapTextureRenderer
+import com.example.animation_to_video.datamodel.TemplatePropertiesData
 import com.example.animation_to_video.getBestSupportedResolution
 import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
 import com.example.animation_to_video.videoprocessing.Encoder
@@ -80,16 +83,19 @@ class AnimationOverlayProcessor {
 
     private var thread: HandlerThread? = null
 
-    private val totalTime = 10000000L
+    private var totalTime = 10000000L
 
     // OnFrameAvailable Callback is called from a different thread than
     // our OpenGL rendering thread, so we need some synchronization
     private val lock = Object()
 
-    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor , userInputForTemplate: UserInputForTemplate) {
+    fun process(context: Context, outPath: String, inputVidFd: FileDescriptor , templatePropertiesData: TemplatePropertiesData) {
+
+        val mp = MediaPlayer.create(context, Uri.parse(templatePropertiesData.backgroundVideoUri))
+        totalTime = 1000L*mp.duration
         try {
             init(context,outPath, inputVidFd)
-            process(context, userInputForTemplate)
+            process(context, templatePropertiesData)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -122,7 +128,7 @@ class AnimationOverlayProcessor {
         videoRenderer = BitmapTextureRenderer()
         bitmapRenderer = BitmapTextureRenderer(false)
         surfaceTexture = SurfaceTexture(videoRenderer!!.texId)
-        drawElementProcessor = DrawElementProcess(width,height,context)
+      //  drawElementProcessor = DrawElementProcess(width,height,context)
 
         bitmapEffectFactory = BitmapEffectFactory()
 
@@ -232,16 +238,18 @@ class AnimationOverlayProcessor {
             throw RuntimeException("eglMakeCurrent(): " + GLUtils.getEGLErrorString(EGL14.eglGetError()))
     }
     var totalFrames = 0
-    private fun process(context: Context,userInputForTemplate: UserInputForTemplate) {
+    private fun process(context: Context, templatePropertiesData: TemplatePropertiesData) {
 
         // template choose
 
-        val templateOne = TemplateOne(width,height,context,userInputForTemplate)
+  /*      val templateOne = TemplateOne(width,height,context,userInputForTemplate)
         val templateTwo = TemplateTwo(width,height,context,userInputForTemplate)
         val templateThree = TemplateThree(width,height,context,userInputForTemplate)
         val templateFour = TemplateFour(width,height,context,userInputForTemplate)
         val templateFive = TemplateFive(width,height,context,userInputForTemplate)
-        val templateSix = TemplateSix(width,height,context,userInputForTemplate)
+        val templateSix = TemplateSix(width,height,context,userInputForTemplate)*/
+
+        drawElementProcessor = DrawElementProcess(width,height,templatePropertiesData)
 
         allInputExtracted = false
         allInputDecoded = false
@@ -312,14 +320,16 @@ class AnimationOverlayProcessor {
 
                             //val bitmapToDraw = createBitmap(width, height)
                             //val bitmapToDraw = drawElementProcessor?.createBitmap(bufferInfo.presentationTimeUs,totalTime)
-                            val bitmapToDraw = when (userInputForTemplate.selectedTemplate) {
+                          /*  val bitmapToDraw = when (userInputForTemplate.selectedTemplate) {
                                 0 -> templateOne.gitBitmap(bufferInfo.presentationTimeUs)
                                 1 -> templateTwo.getBitmap(bufferInfo.presentationTimeUs)
                                 2 -> templateThree.getBitmap(bufferInfo.presentationTimeUs)
                                 3 -> templateFour.getBitmap(bufferInfo.presentationTimeUs)
                                 4 -> templateFive.getBitmap(bufferInfo.presentationTimeUs)
                                 else -> templateSix.getBitmap(bufferInfo.presentationTimeUs)
-                            }
+                            }*/
+
+                            val bitmapToDraw = drawElementProcessor!!.getBitmap(bufferInfo.presentationTimeUs)
 
                             val newMVP = bitmapEffectFactory?.getMVP(
                                 5,
@@ -435,6 +445,10 @@ class AnimationOverlayProcessor {
         //
 
         return mvp
+    }
+
+    fun getProgress(): Int {
+        return ((bufferInfo.presentationTimeUs.toFloat() / totalTime.toFloat())*100).toInt()
     }
 
     companion object {

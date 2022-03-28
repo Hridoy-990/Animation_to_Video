@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".editor.EditorActivity"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        app:cardBackgroundColor="@color/card_view_background"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:elevation="4dp">
+
+
+        <VideoView
+            android:id="@+id/vv_template_preview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <Button
+            android:id="@+id/bt_play_template_preview"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Play Preview" />
+
+        <Button
+            android:id="@+id/bt_export"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Export" />
+
+    </androidx.cardview.widget.CardView>
+
+    <ScrollView
+        android:id="@+id/mScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:cardBackgroundColor="@color/card_view_background"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="top|left"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingTop="7dp"
+                    android:text="Export Resolution : "
+                    android:textAlignment="textStart"
+                    android:textSize="14sp"
+                    tools:ignore="RtlCompat" />
+
+                <Spinner
+                    android:id="@+id/sp_video_resolution"
+                    android:popupBackground="@color/spinner_view_background"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="170dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_bigtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardBackgroundColor="@color/card_view_background">
+
+                <TextView
+                    android:id="@+id/textViedsffsw4sadfas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Big Title"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:id="@+id/ibt_expand_bigtitile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/expand_arrow" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_bigtitle_expansion"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="60dp">
+
+                    <EditText
+                        android:id="@+id/et_bigtext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_bigtext_color_picker"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="bottom|left"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/color_pallete" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_bigtext_position_change"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="bottom|left"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/four_direction" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_bigtext_font_change"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="bottom|left"
+                        android:layout_marginLeft="130dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/change_font" />
+
+                </RelativeLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_smalltext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardBackgroundColor="@color/card_view_background">
+
+                <ImageButton
+                    android:id="@+id/ibt_expand_smalltitle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/expand_arrow" />
+
+                <TextView
+                    android:id="@+id/textView4sadfas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Small Title"
+                    android:textSize="18sp" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_smalltitle_expansion"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="60dp">
+
+
+                    <EditText
+                        android:id="@+id/et_smalltext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_smalltext_color_picker"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top|left"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/color_pallete" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_smalltext_position_change"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top|left"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/four_direction" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_smalltext_font_change"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="130dp"
+                        android:layout_marginTop="60dp"
+                        app:srcCompat="@drawable/change_font" />
+
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_bar_element"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                app:cardBackgroundColor="@color/card_view_background">
+
+                <ImageButton
+                    android:id="@+id/ibt_expand_barelement"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/expand_arrow" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Bar element"
+                    android:textSize="18sp" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_barelement_expand"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="60dp">
+
+                    <ImageView
+                        android:id="@+id/iv_bar_element"
+                        android:layout_width="match_parent"
+                        android:layout_height="15dp"
+                        android:layout_gravity="bottom|top|left"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_bar_element_color_picker"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top|left"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="40dp"
+                        app:srcCompat="@drawable/color_pallete" />
+
+                    <ImageButton
+                        android:id="@+id/ibt_bar_element_position"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="top|left"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginTop="40dp"
+                        app:srcCompat="@drawable/four_direction" />
+
+                </RelativeLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                app:cardBackgroundColor="@color/card_view_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp">
+
+                <ImageButton
+                    android:id="@+id/ibt_expand_background_preview"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right|top"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/expand_arrow" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:text="Background"
+                    android:textSize="18sp" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_background_expand"
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    android:layout_marginTop="60dp">
+
+                    <TextView
+                        android:id="@+id/tv_background_type_text"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="top|left"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Type : " />
+
+                    <Spinner
+                        android:id="@+id/sp_background_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="top|left"
+                        android:popupBackground="@color/spinner_view_background" />
+
+                    <Button
+                        android:id="@+id/bt_change_background"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|top"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="200dp"
+                        android:layout_marginRight="10dp"
+                        android:text="change"
+                        android:textSize="14sp"
+                        app:iconPadding="0dp" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        >
+
+                        <VideoView
+                            android:id="@+id/vv_background_preview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <ImageButton
+                            android:id="@+id/ibt_play_background_video"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            android:src="@android:drawable/ic_media_play" />
+
+                    </FrameLayout>
+
+
+
+                    <ImageView
+                        android:id="@+id/iv_background_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_gravity="top"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/black"
+                        app:srcCompat="@drawable/ic_splash_screen" />
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

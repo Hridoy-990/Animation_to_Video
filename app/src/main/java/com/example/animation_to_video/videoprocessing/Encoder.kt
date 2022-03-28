@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.view.Surface
+import com.example.animation_to_video.datamodel.TemplatePropertiesData
 import com.example.animation_to_video.getBestSupportedResolution
 import com.example.animation_to_video.getSizeByHeight
 import com.example.animation_to_video.userinputtemplate.UserInputForTemplate
@@ -43,12 +44,12 @@ class Encoder() {
 
 
     fun encode(outVideoFilePath: String, backgroundImageUri: Uri, contentResolver: ContentResolver , backgroundOpacity: Float,
-               userInputForTemplate: UserInputForTemplate
+               templatePropertiesData: TemplatePropertiesData
     ) {
         try {
-            initEncoder(outVideoFilePath, backgroundImageUri, contentResolver,userInputForTemplate)
+            initEncoder(outVideoFilePath, backgroundImageUri, contentResolver,templatePropertiesData)
 
-            createVideo(backgroundImageUri, contentResolver, backgroundOpacity,userInputForTemplate)
+            createVideo(backgroundImageUri, contentResolver, backgroundOpacity,templatePropertiesData)
         } catch (e: Exception) {
             Log.e(TAG, "Encoding failed: " + e)
         } finally {
@@ -58,12 +59,12 @@ class Encoder() {
 
     private fun initEncoder(outVideoFilePath: String, backgroundImageUri: Uri,
                             contentResolver: ContentResolver,
-                            userInputForTemplate: UserInputForTemplate) {
+                            templatePropertiesData: TemplatePropertiesData) {
         encoder = MediaCodec.createEncoderByType(mime)
        // size = getSupportedSize(backgroundImageUri, contentResolver)
 
 
-        size = getSizeByHeight(userInputForTemplate.videoResolution)
+        size = getSizeByHeight(templatePropertiesData.videoResolution)
 
         val format = getFormat(size!!)
 
@@ -141,7 +142,7 @@ class Encoder() {
 
 
     private fun createVideo(logoUri: Uri, contentResolver: ContentResolver,
-                            backgroundOpacity: Float,userInputForTemplate: UserInputForTemplate) {
+                            backgroundOpacity: Float, templatePropertiesData: TemplatePropertiesData) {
         val renderer = TextureRenderer(backgroundOpacity)
         val effectsFactory = EffectMvp()
 
@@ -149,11 +150,11 @@ class Encoder() {
             MediaStore.Images.Media.getBitmap(contentResolver, logoUri),
             size!!.width,size!!.height,false)
 
-        if(userInputForTemplate.backgroundType == "color"){
+        if(templatePropertiesData.backgroundType == "color"){
             val rect = Rect(0,0,bitmap.width,bitmap.height)
             val canvas = Canvas(bitmap)
             val paint = Paint()
-            paint.color = userInputForTemplate.backgroundColor
+            paint.color = templatePropertiesData.backgroundColor
             canvas.drawRect(rect,paint)
         }
 
@@ -231,6 +232,10 @@ class Encoder() {
         eglDisplay = EGL14.EGL_NO_DISPLAY
         eglContext = EGL14.EGL_NO_CONTEXT
         eglSurface = EGL14.EGL_NO_SURFACE
+    }
+
+    fun getProgress(): Int {
+        return (100f*(presentationTimeUs.toFloat() / totalTime.toFloat())).toInt()
     }
 
     companion object {

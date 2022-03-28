@@ -22,5 +22,6 @@
         <item>image</item>
         <item>color</item>
     </string-array>
+    <integer name="swing_anim_time">750</integer>
 
 </resources>

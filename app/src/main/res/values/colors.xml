@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="upper_background">#FF566173</color>
+    <color name="lower_background">#FF4A5059</color>
+    <color name="text_color">#FF000000</color>
+    <color name="shadow_background">#50000000</color>
+    <color name="card_view_background">#FF6E7278</color>
+    <color name="spinner_view_background">#FF6E7278</color>
+    <color name="processing_gradient_dark">#FF3D0C0C</color>
+    <color name="processing_gradient_light">#FFE34040</color>
 </resources>
